@@ -1,14 +1,15 @@
 package com.ll.JPJson.lib.parsec;
 
 import com.ll.JPJson.lib.json.JsonPrimitive;
+import com.ll.JParsec.lib.CombinatorOperator;
 import com.ll.JParsec.lib.Parser;
 import com.ll.JParsec.lib.State;
 
-import static com.ll.JParsec.lib.CombinatorOperator.Try;
-import static com.ll.JParsec.lib.CombinatorOperator.choice;
-import static com.ll.JParsec.lib.TextOperator.Float;
-import static com.ll.JParsec.lib.TextOperator.Int;
-import static com.ll.JParsec.lib.TextOperator.Str;
+import java.util.ArrayList;
+
+import static com.ll.JParsec.lib.CombinatorOperator.*;
+import static com.ll.JParsec.lib.TextOperator.*;
+import static com.ll.JParsec.lib.AtomOperator.*;
 
 /**
  * Created by liuli on 15-12-11.
@@ -56,6 +57,24 @@ public class JPJsonAtomicValueOperator {
         }
         return new JPJbooleanParser();
     }
+
+    public static Parser<String> JPJsonStringOperator() {
+        class strParser extends Parser{
+
+            @Override
+            public Object parse(State state) {
+                Parser par = between(Chr('"'), many(notEqual('"')), Chr('"'));
+                ArrayList<Character> arrayList = (ArrayList<Character>) par.parse(state);
+                char[] re = new char[arrayList.size()];
+                for (int i = 0; i < re.length; i++) {
+                    re[i] = arrayList.get(i);
+                }
+                return new String(re);
+            }
+        }
+        return new strParser();
+    }
+
     public static Parser JPJsonValueOperator() {
         class JPJsonValueParser extends Parser {
 

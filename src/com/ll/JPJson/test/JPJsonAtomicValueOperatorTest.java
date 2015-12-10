@@ -2,7 +2,6 @@ package com.ll.JPJson.test;
 
 import com.ll.JPJson.lib.json.JsonPrimitive;
 import com.ll.JPJson.lib.parsec.JPJsonAtomicValueOperator;
-import com.ll.JPJson.lib.parsec.JPJsonPrimitiveTypeOperator;
 import com.ll.JParsec.lib.Parser;
 import com.ll.JParsec.lib.State;
 import com.ll.JParsec.lib.TextState;
@@ -13,7 +12,7 @@ import static org.junit.Assert.*;
 /**
  * Created by liuli on 15-12-7.
  */
-public class JPJsonPrimitiveTypeOperatorTest {
+public class JPJsonAtomicValueOperatorTest {
 
     @Test
     public void testJPJsonIntOperator() throws Exception {
@@ -52,5 +51,13 @@ public class JPJsonPrimitiveTypeOperatorTest {
 
         state = new TextState("TRUE");
         assertEquals(true, booleanParser.parse(state).getAsBoolean());
+    }
+
+    @Test
+    public void testJPJsonStringOperator() throws Exception {
+        Parser par = JPJsonAtomicValueOperator.JPJsonStringOperator();
+        State state = new TextState("\"abcdefg \"");
+
+        assertEquals("abcdefg ", par.parse(state));
     }
 }
