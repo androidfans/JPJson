@@ -1,7 +1,7 @@
 package com.ll.JPJson.lib.parsec;
 
+import com.ll.JPJson.lib.json.JsonNull;
 import com.ll.JPJson.lib.json.JsonPrimitive;
-import com.ll.JParsec.lib.CombinatorOperator;
 import com.ll.JParsec.lib.Parser;
 import com.ll.JParsec.lib.State;
 
@@ -15,14 +15,14 @@ import static com.ll.JParsec.lib.AtomOperator.*;
  * Created by liuli on 15-12-11.
  */
 public class JPJsonAtomicValueOperator {
-    public static Parser JPJsonIntOperator() {
+    public static Parser JPJsonNumberOperator() {
         class JPJIntParser extends Parser<JsonPrimitive>{
 
             @Override
             public JsonPrimitive parse(State state) {
                 Parser<String> intParser = Int();
                 String data = intParser.parse(state);
-                int iData = Integer.parseInt(data);
+                long iData = Long.parseLong(data);
                 return new JsonPrimitive(iData);
             }
         }
@@ -58,12 +58,66 @@ public class JPJsonAtomicValueOperator {
         return new JPJbooleanParser();
     }
 
+
+
+    public static Parser JPJsonEscapeCharSOperator() {
+        class JPJsonEscapeCharSParser extends Parser {
+
+            @Override
+            public Object parse(State state) {
+                Chr('\\').parse(state);
+                char data = (char) charOf("nrt\\\"").parse(state);
+                switch (data) {
+                    case 'n':
+                        return '\n';
+                    case 'r':
+                        return '\r';
+                    case 't':
+                        return '\t';
+                    case '\\':
+                        return '\\';
+                    case '"':
+                        return '"';
+                    default:
+                        return fail("unknown escape char").parse(state);
+                }
+            }
+        }
+        return new JPJsonEscapeCharSParser();
+    }
+
+    public static Parser JPJsonEscapeCharCOperator() {
+        class JPJsonEscapeCharCParser extends Parser {
+
+            @Override
+            public Object parse(State state) {
+                Chr('\\').parse(state);
+                char data = (char) charOf("nrt'\\").parse(state);
+                switch (data) {
+                    case 'n':
+                        return '\n';
+                    case 'r':
+                        return '\r';
+                    case 't':
+                        return '\t';
+                    case '\\':
+                        return '\\';
+                    case '\'':
+                        return '\'';
+                    default:
+                        return fail("unknown escape char").parse(state);
+                }
+            }
+        }
+        return new JPJsonEscapeCharCParser();
+    }
+
     public static Parser<String> JPJsonStringOperator() {
         class strParser extends Parser{
 
             @Override
             public Object parse(State state) {
-                Parser par = between(Chr('"'), many(notEqual('"')), Chr('"'));
+                Parser par = between(Chr('"'), many(choice(Try(JPJsonEscapeCharSOperator()),Try(notEqual('"')))), Chr('"'));
                 ArrayList<Character> arrayList = (ArrayList<Character>) par.parse(state);
                 char[] re = new char[arrayList.size()];
                 for (int i = 0; i < re.length; i++) {
@@ -80,10 +134,13 @@ public class JPJsonAtomicValueOperator {
 
             @Override
             public Object parse(State state) {
-                Parser ch = choice(Try(JPJbooleanOperator()), Try(JPJsonDoubleOperator()), Try(JPJsonIntOperator()));
+                Parser ch = choice(Try(JPJbooleanOperator()), Try(JPJsonDoubleOperator()), Try(JPJsonNumberOperator()));
                 return ch.parse(state);
             }
         }
         return new JPJsonValueParser();
+    }
+    public static Parser JPJsonNullOperator() {
+       return choice(Try(Str("null")), Str("NULL")).then(Return(JsonNull.instance()));
     }
 }

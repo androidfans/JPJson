@@ -1,5 +1,6 @@
 package com.ll.JPJson.test;
 
+import com.ll.JPJson.lib.json.JsonNull;
 import com.ll.JPJson.lib.json.JsonPrimitive;
 import com.ll.JPJson.lib.parsec.JPJsonAtomicValueOperator;
 import com.ll.JParsec.lib.Parser;
@@ -17,7 +18,7 @@ public class JPJsonAtomicValueOperatorTest {
     @Test
     public void testJPJsonIntOperator() throws Exception {
 
-        Parser<JsonPrimitive> IntParser = JPJsonAtomicValueOperator.JPJsonIntOperator();
+        Parser<JsonPrimitive> IntParser = JPJsonAtomicValueOperator.JPJsonNumberOperator();
         State state = new TextState("15512");
         assertEquals(15512, IntParser.parse(state).getAsInteger().intValue());
 
@@ -54,10 +55,34 @@ public class JPJsonAtomicValueOperatorTest {
     }
 
     @Test
+    public void testJPJsonEscapeCharacterOperator() throws Exception {
+        State state = new TextState("\\n\\\"");
+        Parser CharS = JPJsonAtomicValueOperator.JPJsonEscapeCharSOperator();
+        assertEquals('\n', CharS.parse(state));
+        assertEquals('\"', CharS.parse(state));
+
+
+        state = new TextState("\\n\\\'");
+        Parser CharC = JPJsonAtomicValueOperator.JPJsonEscapeCharCOperator();
+        assertEquals('\n', CharC.parse(state));
+        assertEquals('\'', CharC.parse(state));
+    }
+
+    @Test
     public void testJPJsonStringOperator() throws Exception {
         Parser par = JPJsonAtomicValueOperator.JPJsonStringOperator();
-        State state = new TextState("\"abcdefg \"");
+        State state = new TextState("\"a\\\"\"");
 
-        assertEquals("abcdefg ", par.parse(state));
+        assertEquals("a\"", par.parse(state));
+    }
+
+    @Test
+    public void testJPJsonNullOperator() throws Exception {
+        Parser jpjNull = JPJsonAtomicValueOperator.JPJsonNullOperator();
+        State state = new TextState("null");
+        assertEquals(JsonNull.instance(), jpjNull.parse(state));
+
+        state = new TextState("NULL");
+        assertEquals(JsonNull.instance(), jpjNull.parse(state));
     }
 }
