@@ -1,16 +1,19 @@
 package com.ll.JPJson.lib.parsec;
 
-import com.ll.JPJson.lib.json.JsonNull;
 import com.ll.JPJson.lib.json.JsonPrimitive;
 import com.ll.JParsec.lib.Parser;
 import com.ll.JParsec.lib.State;
-import static com.ll.JParsec.lib.TextOperator.*;
-import static com.ll.JParsec.lib.AtomOperator.*;
-import static com.ll.JParsec.lib.CombinatorOperator.*;
+
+import static com.ll.JParsec.lib.CombinatorOperator.Try;
+import static com.ll.JParsec.lib.CombinatorOperator.choice;
+import static com.ll.JParsec.lib.TextOperator.Float;
+import static com.ll.JParsec.lib.TextOperator.Int;
+import static com.ll.JParsec.lib.TextOperator.Str;
+
 /**
- * Created by liuli on 15-12-7.
+ * Created by liuli on 15-12-11.
  */
-public class JPJsonPrimitiveTypeOperator {
+public class JPJsonAtomicValueOperator {
     public static Parser JPJsonIntOperator() {
         class JPJIntParser extends Parser<JsonPrimitive>{
 
@@ -52,5 +55,16 @@ public class JPJsonPrimitiveTypeOperator {
             }
         }
         return new JPJbooleanParser();
+    }
+    public static Parser JPJsonValueOperator() {
+        class JPJsonValueParser extends Parser {
+
+            @Override
+            public Object parse(State state) {
+                Parser ch = choice(Try(JPJbooleanOperator()), Try(JPJsonDoubleOperator()), Try(JPJsonIntOperator()));
+                return ch.parse(state);
+            }
+        }
+        return new JPJsonValueParser();
     }
 }

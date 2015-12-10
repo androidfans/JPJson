@@ -1,5 +1,7 @@
 package com.ll.JPJson.test;
 
+import com.ll.JPJson.lib.json.JsonPrimitive;
+import com.ll.JPJson.lib.parsec.JPJsonAtomicValueOperator;
 import com.ll.JPJson.lib.parsec.JPJsonPrimitiveTypeOperator;
 import com.ll.JParsec.lib.Parser;
 import com.ll.JParsec.lib.State;
@@ -16,39 +18,39 @@ public class JPJsonPrimitiveTypeOperatorTest {
     @Test
     public void testJPJsonIntOperator() throws Exception {
 
-        Parser IntParser = JPJsonPrimitiveTypeOperator.JPJsonIntOperator();
+        Parser<JsonPrimitive> IntParser = JPJsonAtomicValueOperator.JPJsonIntOperator();
         State state = new TextState("15512");
-        assertEquals(15512, IntParser.parse(state));
+        assertEquals(15512, IntParser.parse(state).getAsInteger().intValue());
 
         state = new TextState("-4521");
-        assertEquals(-4521, IntParser.parse(state));
+        assertEquals(-4521, IntParser.parse(state).getAsInteger().intValue());
 
     }
 
     @Test
     public void testJPJsonFloatOperator() throws Exception {
-        Parser FloatParser = JPJsonPrimitiveTypeOperator.JPJsonFloatOperator();
+        Parser<JsonPrimitive> FloatParser = JPJsonAtomicValueOperator.JPJsonDoubleOperator();
         State state = new TextState("21.3");
 
-        assertEquals(21.3f, FloatParser.parse(state));
+        assertEquals(new Double(21.3), FloatParser.parse(state).getAsDouble());
 
         state = new TextState("-.23");
-        assertEquals(-0.23f,FloatParser.parse(state));
+        assertEquals(new Double(-0.23), FloatParser.parse(state).getAsDouble());
     }
 
     @Test
     public void testJPJsonBooleanOperator() throws Exception {
-        Parser booleanParser = JPJsonPrimitiveTypeOperator.JPJbooleanOperator();
+        Parser<JsonPrimitive> booleanParser = JPJsonAtomicValueOperator.JPJbooleanOperator();
         State state = new TextState("false");
-        assertEquals(false, booleanParser.parse(state));
+        assertEquals(false, booleanParser.parse(state).getAsBoolean());
 
         state = new TextState("true");
-        assertEquals(true, booleanParser.parse(state));
+        assertEquals(true, booleanParser.parse(state).getAsBoolean());
 
         state = new TextState("FALSE");
-        assertEquals(false, booleanParser.parse(state));
+        assertEquals(false, booleanParser.parse(state).getAsBoolean());
 
         state = new TextState("TRUE");
-        assertEquals(true, booleanParser.parse(state));
+        assertEquals(true, booleanParser.parse(state).getAsBoolean());
     }
 }
