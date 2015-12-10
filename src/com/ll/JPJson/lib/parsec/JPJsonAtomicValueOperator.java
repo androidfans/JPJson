@@ -130,16 +130,9 @@ public class JPJsonAtomicValueOperator {
     }
 
     public static Parser JPJsonValueOperator() {
-        class JPJsonValueParser extends Parser {
-
-            @Override
-            public Object parse(State state) {
-                Parser ch = choice(Try(JPJbooleanOperator()), Try(JPJsonDoubleOperator()), Try(JPJsonNumberOperator()));
-                return ch.parse(state);
-            }
-        }
-        return new JPJsonValueParser();
+        return choice(Try(JPJsonStringOperator()),Try(JPJbooleanOperator()), Try(JPJsonDoubleOperator()),Try(JPJsonNullOperator()),JPJsonNumberOperator());
     }
+
     public static Parser JPJsonNullOperator() {
        return choice(Try(Str("null")), Str("NULL")).then(Return(JsonNull.instance()));
     }

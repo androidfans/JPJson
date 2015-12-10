@@ -14,8 +14,8 @@ public class JsonPrimitive extends JsonElement{
         return (Boolean) value;
     }
 
-    public Integer getAsInteger() {
-        return (Integer) value;
+    public Long getAsNumber() {
+        return (Long) value;
     }
 
     public Double getAsDouble() {

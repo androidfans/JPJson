@@ -20,10 +20,10 @@ public class JPJsonAtomicValueOperatorTest {
 
         Parser<JsonPrimitive> IntParser = JPJsonAtomicValueOperator.JPJsonNumberOperator();
         State state = new TextState("15512");
-        assertEquals(15512, IntParser.parse(state).getAsInteger().intValue());
+        assertEquals(15512, IntParser.parse(state).getAsNumber().intValue());
 
         state = new TextState("-4521");
-        assertEquals(-4521, IntParser.parse(state).getAsInteger().intValue());
+        assertEquals(-4521, IntParser.parse(state).getAsNumber().intValue());
 
     }
 
@@ -84,5 +84,26 @@ public class JPJsonAtomicValueOperatorTest {
 
         state = new TextState("NULL");
         assertEquals(JsonNull.instance(), jpjNull.parse(state));
+    }
+
+    @Test
+    public void testJPJsonValueOperator() throws Exception {
+        Parser valueP = JPJsonAtomicValueOperator.JPJsonValueOperator();
+        State state = new TextState("\"dfs\\\"\"");
+        assertEquals("dfs\"", valueP.parse(state));
+
+
+        state = new TextState("25646");
+        assertEquals(25646, ((JsonPrimitive)valueP.parse(state)).getAsNumber().intValue());
+
+
+        state = new TextState("-0.12");
+        assertEquals(new Double(-0.12), ((JsonPrimitive) valueP.parse(state)).getAsDouble());
+
+        state = new TextState("TRUE");
+        assertEquals(true, ((JsonPrimitive) valueP.parse(state)).getAsBoolean());
+
+        state = new TextState("NULL");
+        assertEquals(JsonNull.instance(),valueP.parse(state));
     }
 }
