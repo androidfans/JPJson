@@ -3,6 +3,7 @@ package com.ll.JPJson.lib.parsec;
 import com.ll.JPJson.lib.json.JsonNull;
 import com.ll.JParsec.lib.Parser;
 import com.ll.JParsec.lib.State;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import static com.ll.JParsec.lib.TextOperator.*;
 import static com.ll.JParsec.lib.AtomOperator.*;
@@ -42,7 +43,10 @@ public class JPJsonPrimitiveTypeOperator {
 
             @Override
             public Object parse(State state) {
-                return choice(Try(Str("null")), Str("NULL")).then(Return(JsonNull.instance()));
+                Parser trueParser = choice(Try(Str("true")), Str("TRUE"));
+                Parser falseParser = choice(Try(Str("false")), Str("FALSE"));
+                String data = (String) choice(Try(trueParser), falseParser).parse(state);
+                return Boolean.parseBoolean(data);
             }
         }
         return new JPJbooleanParser();

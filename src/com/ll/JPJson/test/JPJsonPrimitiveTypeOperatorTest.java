@@ -35,4 +35,20 @@ public class JPJsonPrimitiveTypeOperatorTest {
         state = new TextState("-.23");
         assertEquals(-0.23f,FloatParser.parse(state));
     }
+
+    @Test
+    public void testJPJsonBooleanOperator() throws Exception {
+        Parser booleanParser = JPJsonPrimitiveTypeOperator.JPJbooleanOperator();
+        State state = new TextState("false");
+        assertEquals(false, booleanParser.parse(state));
+
+        state = new TextState("true");
+        assertEquals(true, booleanParser.parse(state));
+
+        state = new TextState("FALSE");
+        assertEquals(false, booleanParser.parse(state));
+
+        state = new TextState("TRUE");
+        assertEquals(true, booleanParser.parse(state));
+    }
 }

@@ -15,5 +15,4 @@ public class JPJsonNullOperator {
     public static Parser JPJsonNullOperator() {
        return choice(Try(Str("null")), Str("NULL")).then(Return(JsonNull.instance()));
     }
-
 }
