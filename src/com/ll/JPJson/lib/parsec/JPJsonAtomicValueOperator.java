@@ -131,6 +131,7 @@ public class JPJsonAtomicValueOperator {
     }
 
     public static Parser JPJsonValueOperator() {
+        //TODO:调整先后顺序,把出现概率相对较高,肯那个导致的递归层次较浅的算子放到靠前的位置
         return choice(Try(JPJsonStringOperator()),Try(JPJbooleanOperator()), Try(JPJsonDoubleOperator()),Try(JPJsonNullOperator()),Try(JPJsonNumberOperator()),Try(JPJsonEncapsulationOperator.JPJsonArrayOperator()),JPJsonEncapsulationOperator.JPJsonObjectOperator());
     }
 
