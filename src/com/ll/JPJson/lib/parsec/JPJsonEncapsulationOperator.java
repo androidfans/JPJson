@@ -1,8 +1,9 @@
 package com.ll.JPJson.lib.parsec;
 
-
 import com.ll.JPJson.lib.json.JsonArray;
 import com.ll.JPJson.lib.json.JsonElement;
+import com.ll.JPJson.lib.json.JsonObject;
+import com.ll.JPJson.lib.json.JsonPrimitive;
 import com.ll.JParsec.lib.Parser;
 import com.ll.JParsec.lib.State;
 
@@ -31,14 +32,22 @@ public class JPJsonEncapsulationOperator {
         return new JPJsonArrayParser();
     }
 
-    public static Parser JPJsonObjectOperator(Parser parser) {
-        class JPJsonObjectOperator extends Parser {
+    public static Parser JPJsonObjectOperator() {
+        class JPJsonObjectParser extends Parser<JsonObject> {
 
             @Override
-            public Object parse(State state) {
-                return null;
+            public JsonObject parse(State state) {
+                JsonObject re = new JsonObject();
+                Parser<JsonPrimitive> keyParser = between(skip(Try(whiteSpace())), JPJsonAtomicValueOperator.JPJsonStringOperator(), skip(Try(whiteSpace())));
+                Parser<JsonElement> eleParser = between(skip(Try(whiteSpace())), JPJsonAtomicValueOperator.JPJsonStringOperator(), skip(Try(whiteSpace())));
+                skip(Try(whiteSpace())).then(Chr('{')).parse(state);
+                String key = keyParser.parse(state).getAsString();
+                Chr(':').parse(state);
+                JsonElement ele = eleParser.parse(state);
+                re.add(key, ele);
+                return re;
             }
         }
-        return new JPJsonObjectOperator();
+        return new JPJsonObjectParser();
     }
 }

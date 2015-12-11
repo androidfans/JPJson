@@ -1,6 +1,7 @@
 package com.ll.JPJson.test;
 
 import com.ll.JPJson.lib.json.JsonArray;
+import com.ll.JPJson.lib.json.JsonObject;
 import com.ll.JPJson.lib.parsec.JPJsonEncapsulationOperator;
 import com.ll.JParsec.lib.Parser;
 import com.ll.JParsec.lib.State;
@@ -26,6 +27,8 @@ public class JPJsonEncapsulationOperatorTest {
 
     @Test
     public void testJPJsonObjectOperator() throws Exception {
-
+        State state = new TextState("{ \"n\" : \"a\" }");
+        Parser<JsonObject> objPar = JPJsonEncapsulationOperator.JPJsonObjectOperator();
+        JsonObject obj = objPar.parse(state);
     }
 }

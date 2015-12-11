@@ -1,5 +1,7 @@
 package com.ll.JPJson.lib.json;
 
+import java.util.Base64;
+
 /**
  * Created by liuli on 15-12-7.
  */
@@ -20,5 +22,9 @@ public class JsonPrimitive extends JsonElement{
 
     public Double getAsDouble() {
         return (Double) value;
+    }
+
+    public String getAsString() {
+        return (String) value;
     }
 }
