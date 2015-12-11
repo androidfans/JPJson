@@ -91,6 +91,7 @@ public class JPJsonAtomicValueOperator {
 
             @Override
             public Object parse(State state) {
+                //TODO:这里改成使用查表法
                 Chr('\\').parse(state);
                 char data = (char) charOf("nrt'\\").parse(state);
                 switch (data) {
@@ -130,7 +131,7 @@ public class JPJsonAtomicValueOperator {
     }
 
     public static Parser JPJsonValueOperator() {
-        return choice(Try(JPJsonStringOperator()),Try(JPJbooleanOperator()), Try(JPJsonDoubleOperator()),Try(JPJsonNullOperator()),JPJsonNumberOperator());
+        return choice(Try(JPJsonStringOperator()),Try(JPJbooleanOperator()), Try(JPJsonDoubleOperator()),Try(JPJsonNullOperator()),Try(JPJsonNumberOperator()),Try(JPJsonEncapsulationOperator.JPJsonArrayOperator()),JPJsonEncapsulationOperator.JPJsonObjectOperator());
     }
 
     public static Parser JPJsonNullOperator() {
