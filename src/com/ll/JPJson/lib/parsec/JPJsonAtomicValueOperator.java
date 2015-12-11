@@ -123,7 +123,7 @@ public class JPJsonAtomicValueOperator {
                 for (int i = 0; i < re.length; i++) {
                     re[i] = arrayList.get(i);
                 }
-                return new String(re);
+                return new JsonPrimitive(new String(re));
             }
         }
         return new strParser();
