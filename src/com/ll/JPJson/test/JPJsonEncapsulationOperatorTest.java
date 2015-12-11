@@ -1,5 +1,6 @@
 package com.ll.JPJson.test;
 
+import com.ll.JPJson.lib.json.JsonArray;
 import com.ll.JPJson.lib.parsec.JPJsonEncapsulationOperator;
 import com.ll.JParsec.lib.Parser;
 import com.ll.JParsec.lib.State;
@@ -19,7 +20,8 @@ public class JPJsonEncapsulationOperatorTest {
     public void testJPJsonArrayOperator() throws Exception {
         State state = new TextState("[\"he\\n\",45]");
         Parser arrPar = JPJsonEncapsulationOperator.JPJsonArrayOperator();
-        assertEquals(2, ((ArrayList) arrPar.parse(state)).size());
+        JsonArray re = (JsonArray) arrPar.parse(state);
+        assertEquals(2, re.size());
     }
 
     @Test

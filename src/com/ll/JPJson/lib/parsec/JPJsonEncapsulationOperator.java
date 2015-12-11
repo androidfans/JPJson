@@ -1,8 +1,13 @@
 package com.ll.JPJson.lib.parsec;
 
 
+import com.ll.JPJson.lib.json.JsonArray;
+import com.ll.JPJson.lib.json.JsonElement;
 import com.ll.JParsec.lib.Parser;
 import com.ll.JParsec.lib.State;
+
+import java.util.List;
+
 import static com.ll.JParsec.lib.TextOperator.*;
 import static com.ll.JParsec.lib.CombinatorOperator.*;
 
@@ -11,14 +16,16 @@ import static com.ll.JParsec.lib.CombinatorOperator.*;
  */
 public class JPJsonEncapsulationOperator {
     public static Parser JPJsonArrayOperator() {
-        class JPJsonArrayParser extends Parser {
+        class JPJsonArrayParser extends Parser<JsonArray> {
 
             @Override
-            public Object parse(State state) {
+            public JsonArray parse(State state) {
                 Parser left = Chr('[');
                 Parser right = Chr(']');
-                Parser sep = sepBy(between(skip(Try(whiteSpace())), JPJsonAtomicValueOperator.JPJsonValueOperator(),skip(Try(whiteSpace()))),Chr(','));
-                return left.then(sep).over(right).parse(state);
+                Parser sep = sepBy(between(skip(Try(whiteSpace())), JPJsonAtomicValueOperator.JPJsonValueOperator(), skip(Try(whiteSpace()))), Chr(','));
+                JsonArray re = new JsonArray();
+                re.setElements((List<JsonElement>) left.then(sep).over(right).parse(state));
+                return re;
             }
         }
         return new JPJsonArrayParser();
