@@ -8,7 +8,6 @@ import com.ll.JParsec.lib.State;
 import com.ll.JParsec.lib.TextState;
 import org.junit.Test;
 
-import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
@@ -27,7 +26,7 @@ public class JPJsonEncapsulationOperatorTest {
 
     @Test
     public void testJPJsonObjectOperator() throws Exception {
-        State state = new TextState("{ \"n\" : \"a\" }");
+        State state = new TextState("{ \"name\" : {\"a\":12} }");
         Parser<JsonObject> objPar = JPJsonEncapsulationOperator.JPJsonObjectOperator();
         JsonObject obj = objPar.parse(state);
     }

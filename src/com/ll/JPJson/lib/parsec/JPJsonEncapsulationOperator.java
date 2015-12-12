@@ -39,7 +39,7 @@ public class JPJsonEncapsulationOperator {
             public JsonObject parse(State state) {
                 JsonObject re = new JsonObject();
                 Parser<JsonPrimitive> keyParser = between(skip(Try(whiteSpace())), JPJsonAtomicValueOperator.JPJsonStringOperator(), skip(Try(whiteSpace())));
-                Parser<JsonElement> eleParser = between(skip(Try(whiteSpace())), JPJsonAtomicValueOperator.JPJsonStringOperator(), skip(Try(whiteSpace())));
+                Parser<JsonElement> eleParser = between(skip(Try(whiteSpace())), JPJsonAtomicValueOperator.JPJsonValueOperator(), skip(Try(whiteSpace())));
                 skip(Try(whiteSpace())).then(Chr('{')).parse(state);
                 String key = keyParser.parse(state).getAsString();
                 Chr(':').parse(state);
