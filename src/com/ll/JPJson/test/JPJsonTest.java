@@ -13,8 +13,8 @@ public class JPJsonTest {
 
     @Test
     public void testFromJson() throws Exception {
-        String json = "100";
+        String json = "{\"mingzi\":{\"zhi\":\"liuli\"}}";
         JPJson jpJson = new JPJson();
-        float d  =jpJson.fromJson(json, Float.class);
+        Person d  =jpJson.fromJson(json, Person.class);
     }
 }
