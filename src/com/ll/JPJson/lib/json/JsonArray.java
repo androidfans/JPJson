@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 /**
  * Created by liuli on 15-12-7.
  */
-public class JsonArray extends JsonElement {
+public class JsonArray extends JsonElement implements Iterable<JsonElement> {
 
     public void setElements(List<JsonElement> elements) {
         this.elements = elements;
@@ -26,5 +26,10 @@ public class JsonArray extends JsonElement {
 
     public int size() {
         return getElements().size();
+    }
+
+    @Override
+    public Iterator iterator() {
+        return getElements().iterator();
     }
 }

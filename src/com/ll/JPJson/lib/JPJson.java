@@ -1,8 +1,6 @@
 package com.ll.JPJson.lib;
 
-import com.ll.JPJson.lib.json.JsonElement;
-import com.ll.JPJson.lib.json.JsonObject;
-import com.ll.JPJson.lib.json.JsonPrimitive;
+import com.ll.JPJson.lib.json.*;
 import com.ll.JPJson.lib.parsec.JPJsonAtomicValueOperator;
 
 import com.ll.JParsec.lib.Parser;
@@ -12,6 +10,8 @@ import com.ll.JParsec.lib.TextState;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,14 +26,16 @@ public class JPJson {
     }
 
     private <T> T attachValue(JsonElement re, Class<T> tClass) throws IllegalAccessException {
+        if (re instanceof JsonNull) {
+            return null;
+        }
         if (re instanceof JsonPrimitive) {
             T data = ((JsonPrimitive) re).getValue(tClass);
             return data;
         }
-        //TODO:数组类型
         if (re instanceof JsonObject) {
             T reObj = construct(tClass);
-            Field[] fields = tClass.getDeclaredFields();
+            Field[] fields = tClass.getFields();
             JsonObject jsonObject = (JsonObject) re;
             for (Map.Entry<String,JsonElement> entry: jsonObject) {
                 String key = entry.getKey();
@@ -46,6 +48,15 @@ public class JPJson {
                 }
             }
             return (T)reObj;
+        }
+        if (re instanceof JsonArray) {
+            JsonArray jsonArray = (JsonArray)re;
+            List reList = new ArrayList<>();
+            for (JsonElement element: jsonArray) {
+                Object value = attachValue(element, Object.class);
+                reList.add(value);
+            }
+            return (T)reList;
         }
         return null;
     }
