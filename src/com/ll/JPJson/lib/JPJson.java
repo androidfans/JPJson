@@ -10,10 +10,8 @@ import com.ll.JParsec.lib.State;
 import com.ll.JParsec.lib.TextState;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.security.Key;
 import java.util.Map;
 
 /**
@@ -24,10 +22,10 @@ public class JPJson {
         State state = new TextState(json);
         Parser<JsonObject> parser = JPJsonAtomicValueOperator.JPJsonValueOperator();
         JsonElement re = parser.parse(state);
-        return recurse(re, tClass);
+        return attachValue(re, tClass);
     }
 
-    private <T> T recurse(JsonElement re,Class<T> tClass) throws IllegalAccessException {
+    private <T> T attachValue(JsonElement re, Class<T> tClass) throws IllegalAccessException {
         if (re instanceof JsonPrimitive) {
             T data = ((JsonPrimitive) re).getValue(tClass);
             return data;
@@ -42,9 +40,8 @@ public class JPJson {
                 JsonElement value = entry.getValue();
                 for (Field field : fields) {
                     if (field.getName().equals(key)) {
-                        Object reVal = recurse(value, field.getType());
                         field.setAccessible(true);
-                        field.set(reObj, reVal);
+                        field.set(reObj, attachValue(value, field.getType()));
                     }
                 }
             }
