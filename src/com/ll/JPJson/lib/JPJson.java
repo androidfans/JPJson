@@ -32,7 +32,7 @@ public class JPJson {
             T data = ((JsonPrimitive) re).getValue(tClass);
             return data;
         }
-        //TODO:OBJ或者数组类型
+        //TODO:数组类型
         if (re instanceof JsonObject) {
             T reObj = construct(tClass);
             Field[] fields = tClass.getDeclaredFields();
