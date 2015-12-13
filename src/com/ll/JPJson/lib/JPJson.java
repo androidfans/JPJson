@@ -10,6 +10,7 @@ import com.ll.JParsec.lib.TextState;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,13 @@ public class JPJson {
                 for (Field field : fields) {
                     if (field.getName().equals(key)) {
                         field.setAccessible(true);
-                        field.set(reObj, attachValue(value, field.getType()));
+                        Class fieldType = field.getType();
+                        if (fieldType.isAssignableFrom(List.class)) {
+                            ParameterizedType pt = (ParameterizedType) field.getGenericType();
+                            Class cla = (Class) pt.getActualTypeArguments()[0];
+                            fieldType = cla;
+                        }
+                        field.set(reObj, attachValue(value, fieldType));
                     }
                 }
             }
@@ -53,7 +60,7 @@ public class JPJson {
             JsonArray jsonArray = (JsonArray)re;
             List reList = new ArrayList<>();
             for (JsonElement element: jsonArray) {
-                Object value = attachValue(element, Object.class);
+                Object value = attachValue(element, tClass);
                 reList.add(value);
             }
             return (T)reList;
@@ -73,7 +80,6 @@ public class JPJson {
                 } catch (Exception e) {
                     throw new RuntimeException("parse failed");
                 }
-
                 return obj;
             }
         }

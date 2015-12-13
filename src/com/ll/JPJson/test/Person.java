@@ -7,7 +7,11 @@ import java.util.List;
  * Created by liuli on 15-12-13.
  */
 public class Person {
+    public List<CH> ch;
+}
+
+class CH {
     public String names;
-    public List data;
-    public List times;
+    public List<String> data;
+    public List<String> times;
 }
