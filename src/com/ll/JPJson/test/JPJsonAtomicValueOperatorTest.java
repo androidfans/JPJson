@@ -8,7 +8,8 @@ import com.ll.JParsec.lib.State;
 import com.ll.JParsec.lib.TextState;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
 
 /**
  * Created by liuli on 15-12-7.
@@ -20,10 +21,10 @@ public class JPJsonAtomicValueOperatorTest {
 
         Parser<JsonPrimitive> IntParser = JPJsonAtomicValueOperator.JPJsonNumberOperator();
         State state = new TextState("15512");
-        assertEquals(15512, IntParser.parse(state).getAsNumber().intValue());
+        assertEquals(15512, IntParser.parse(state).getAsInteger().intValue());
 
         state = new TextState("-4521");
-        assertEquals(-4521, IntParser.parse(state).getAsNumber().intValue());
+        assertEquals(-4521, IntParser.parse(state).getAsInteger().intValue());
 
     }
 
@@ -94,7 +95,7 @@ public class JPJsonAtomicValueOperatorTest {
 
 
         state = new TextState("25646");
-        assertEquals(25646, ((JsonPrimitive)valueP.parse(state)).getAsNumber().intValue());
+        assertEquals(25646, ((JsonPrimitive)valueP.parse(state)).getAsInteger().intValue());
 
 
         state = new TextState("-0.12");

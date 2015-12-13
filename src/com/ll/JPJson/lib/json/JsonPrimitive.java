@@ -1,6 +1,9 @@
 package com.ll.JPJson.lib.json;
 
-import java.util.Base64;
+
+import java.awt.geom.Area;
+import java.util.DoubleSummaryStatistics;
+import java.util.Locale;
 
 /**
  * Created by liuli on 15-12-7.
@@ -8,23 +11,98 @@ import java.util.Base64;
 public class JsonPrimitive extends JsonElement{
     public Object value = null;
 
+    public Class[] primitiveClasses = {long.class,int.class,short.class,byte.class,char.class,double.class,float.class,boolean.class};
+
+    public Class[] boxingClasses = {Long.class,Integer.class, Short.class,Byte.class, Character.class, Double.class, Float.class, Boolean.class};
+
+
+    //TODO:INT 和 char, short ,
     public JsonPrimitive(Object value) {
         this.value = value;
     }
 
     public Boolean getAsBoolean() {
-        return (Boolean) value;
+        if (value instanceof Boolean) {
+            return ((Boolean) value).booleanValue();
+        }
+        return Boolean.parseBoolean(getAsString());
     }
 
-    public Long getAsNumber() {
-        return (Long) value;
+    public Long getAsLong() {
+        return value instanceof Long ? ((Long) value).longValue() : Long.parseLong(getAsString());
+    }
+
+    public Integer getAsInteger() {
+        return value instanceof Integer ? ((Integer) value).intValue() : Integer.parseInt(getAsString());
+    }
+
+    public Short getAsShort() {
+        return value instanceof Double ? ((Double) value).shortValue() : Short.parseShort(getAsString());
+    }
+
+    public Byte getAsByte() {
+        return value instanceof Byte ? ((Byte) value).byteValue() : Byte.parseByte(getAsString());
+    }
+
+    public Character getAsCharacter() {
+        return getAsString().charAt(0);
     }
 
     public Double getAsDouble() {
-        return (Double) value;
+        return value instanceof Double ? ((Double) value).doubleValue() : Double.parseDouble(getAsString());
+    }
+
+    public Float getAsFloat() {
+        return value instanceof Float ? ((Float) value).floatValue() : Float.parseFloat(getAsString());
+    }
+
+    public Number getAsNumber() {
+        if (value instanceof String) {
+            return Integer.parseInt((String) value);
+        }
+        return (Number)value;
     }
 
     public String getAsString() {
-        return (String) value;
+        if (value instanceof Number) {
+            return getAsNumber().toString();
+        } else if (value instanceof Boolean) {
+            return ((Boolean) value).toString();
+        } else {
+            return (String) value;
+        }
+    }
+
+    //TODO : 这里写的简直丑爆了.
+    public <T> T getValue(Class<T> tClass) {
+        switch (tClass.getSimpleName()) {
+            case "char":
+            case "Character":
+                return (T) getAsCharacter();
+            case "int":
+            case "Integer":
+                return (T) getAsInteger();
+            case "long":
+            case "Long":
+                return (T) getAsLong();
+            case "byte":
+            case "Byte":
+                return (T) getAsByte();
+            case "short":
+            case "Short":
+                return (T) getAsShort();
+            case "double":
+            case "Double":
+                return (T) getAsDouble();
+            case "float":
+            case "Float":
+                return (T) getAsFloat();
+            case "boolean":
+            case "Boolean":
+                return (T) getAsBoolean();
+            case "String":
+                return (T) getAsString();
+        }
+        return (T) value;
     }
 }
