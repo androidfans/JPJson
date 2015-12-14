@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by liuli on 15-12-13.
  */
-public class Person {
+public class CHS {
     public List<CH> ch;
 }
 

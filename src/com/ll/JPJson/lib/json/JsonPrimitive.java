@@ -11,12 +11,6 @@ import java.util.Locale;
 public class JsonPrimitive extends JsonElement{
     public Object value = null;
 
-    public Class[] primitiveClasses = {long.class,int.class,short.class,byte.class,char.class,double.class,float.class,boolean.class};
-
-    public Class[] boxingClasses = {Long.class,Integer.class, Short.class,Byte.class, Character.class, Double.class, Float.class, Boolean.class};
-
-
-    //TODO:INT 和 char, short ,
     public JsonPrimitive(Object value) {
         this.value = value;
     }
@@ -73,7 +67,6 @@ public class JsonPrimitive extends JsonElement{
         }
     }
 
-    //TODO : 这里写的简直丑爆了.
     public <T> T getValue(Class<T> tClass) {
         switch (tClass.getSimpleName()) {
             case "char":

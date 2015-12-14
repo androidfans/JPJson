@@ -6,6 +6,8 @@ import com.ll.JParsec.lib.Parser;
 import com.ll.JParsec.lib.State;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.ll.JParsec.lib.CombinatorOperator.*;
 import static com.ll.JParsec.lib.TextOperator.*;
@@ -15,6 +17,9 @@ import static com.ll.JParsec.lib.AtomOperator.*;
  * Created by liuli on 15-12-11.
  */
 public class JPJsonAtomicValueOperator {
+
+    public static Map<Character, Character> charsMap = new HashMap<>();
+
     public static Parser JPJsonNumberOperator() {
         class JPJIntParser extends Parser<JsonPrimitive>{
 
@@ -62,7 +67,6 @@ public class JPJsonAtomicValueOperator {
 
     public static Parser JPJsonEscapeCharSOperator() {
         class JPJsonEscapeCharSParser extends Parser {
-
             @Override
             public Object parse(State state) {
                 Chr('\\').parse(state);
@@ -91,7 +95,6 @@ public class JPJsonAtomicValueOperator {
 
             @Override
             public Object parse(State state) {
-                //TODO:这里改成使用查表法
                 Chr('\\').parse(state);
                 char data = (char) charOf("nrt'\\").parse(state);
                 switch (data) {
@@ -131,8 +134,7 @@ public class JPJsonAtomicValueOperator {
     }
 
     public static Parser JPJsonValueOperator() {
-        //TODO:调整先后顺序,把出现概率相对较高,肯那个导致的递归层次较浅的算子放到靠前的位置
-        return choice(Try(JPJsonStringOperator()),Try(JPJbooleanOperator()), Try(JPJsonDoubleOperator()),Try(JPJsonNullOperator()),Try(JPJsonNumberOperator()),Try(JPJsonEncapsulationOperator.JPJsonArrayOperator()),JPJsonEncapsulationOperator.JPJsonObjectOperator());
+        return choice(Try(JPJsonStringOperator()),Try(JPJsonDoubleOperator()),Try(JPJsonNumberOperator()),Try(JPJbooleanOperator()), Try(JPJsonNullOperator()),Try(JPJsonEncapsulationOperator.JPJsonObjectOperator()),JPJsonEncapsulationOperator.JPJsonArrayOperator());
     }
 
     public static Parser JPJsonNullOperator() {

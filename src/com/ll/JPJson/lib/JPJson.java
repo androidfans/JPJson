@@ -6,10 +6,11 @@ import com.ll.JPJson.lib.parsec.JPJsonAtomicValueOperator;
 import com.ll.JParsec.lib.Parser;
 import com.ll.JParsec.lib.State;
 import com.ll.JParsec.lib.TextState;
+import sun.misc.Unsafe;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
+
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,14 +20,14 @@ import java.util.Map;
  * Created by liuli on 15-12-13.
  */
 public class JPJson {
-    public <T> T fromJson(String json, Class<T> tClass) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+    public <T> T fromJson(String json, Class<T> tClass) {
         State state = new TextState(json);
         Parser<JsonObject> parser = JPJsonAtomicValueOperator.JPJsonValueOperator();
         JsonElement re = parser.parse(state);
         return attachValue(re, tClass);
     }
 
-    private <T> T attachValue(JsonElement re, Class<T> tClass) throws IllegalAccessException {
+    private <T> T attachValue(JsonElement re, Class<T> tClass){
         if (re instanceof JsonNull) {
             return null;
         }
@@ -46,11 +47,20 @@ public class JPJson {
                         field.setAccessible(true);
                         Class fieldType = field.getType();
                         if (fieldType.isAssignableFrom(List.class)) {
-                            ParameterizedType pt = (ParameterizedType) field.getGenericType();
+                            ParameterizedType pt = null;
+                            try {
+                                pt = (ParameterizedType) field.getGenericType();
+                            } catch (ClassCastException e) {
+                                throw new RuntimeException("you must offer a genericType on the bean's list type for json array to parse");
+                            }
                             Class cla = (Class) pt.getActualTypeArguments()[0];
                             fieldType = cla;
                         }
-                        field.set(reObj, attachValue(value, fieldType));
+                        try {
+                            field.set(reObj, attachValue(value, fieldType));
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -69,20 +79,15 @@ public class JPJson {
     }
 
     private <T> T construct(Class<T> tClass){
-        Constructor[] ctors = tClass.getDeclaredConstructors();
-        for (Constructor ctor : ctors) {
-            Class[] paramTypes = ctor.getParameterTypes();
-            if (paramTypes.length == 0) {
-                T obj = null;
-                try {
-                    ctor.setAccessible(true);
-                    obj = (T) ctor.newInstance();
-                } catch (Exception e) {
-                    throw new RuntimeException("parse failed");
-                }
-                return obj;
-            }
+        T obj = null;
+        try {
+            Field f = Unsafe.class.getDeclaredField("theUnsafe");
+            f.setAccessible(true);
+            final Unsafe un = (Unsafe) f.get(null);
+            obj = (T) un.allocateInstance(tClass);
+        } catch (Exception e) {
+            throw new RuntimeException("construct object failed");
         }
-        return null;
+        return obj;
     }
 }

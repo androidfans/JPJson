@@ -6,9 +6,7 @@ package com.ll.JPJson.lib.json;
 public class JsonNull extends JsonElement{
     private static final JsonNull INSTANCE = new JsonNull();
 
-    private JsonNull() {
-
-    }
+    private JsonNull(){};
 
     public static JsonNull instance() {
         return INSTANCE;
